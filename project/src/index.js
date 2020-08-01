@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './Components/Dashboard/Dashboard';
-import * as serviceWorker from './serviceWorker';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,7 +9,7 @@ import {
   Redirect
 } from "react-router-dom";
 import Login from './Components/Login/Login';
-import SignUp from './Components/SignUp/SignUp';
+import SignUp from './Components/SignUp/Checkout';
 
 ReactDOM.render(
   <Router>
@@ -28,8 +28,3 @@ ReactDOM.render(
 </Router>,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.register();

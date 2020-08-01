@@ -2,14 +2,23 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+//import Checkbox from '@material-ui/core/Checkbox';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 
 export default function AddressForm() {
+  const [value, setValue] = React.useState('female');
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Personal Data
+        Basic Information
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
@@ -19,7 +28,7 @@ export default function AddressForm() {
             name="firstName"
             label="First name"
             fullWidth
-            autoComplete="given-name"
+            //autoComplete="given-name"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -29,10 +38,60 @@ export default function AddressForm() {
             name="lastName"
             label="Last name"
             fullWidth
-            autoComplete="family-name"
+            //autoComplete="family-name"
+          />
+        </Grid>
+        <Grid item xs={12} style={{paddingBottom:"0px"}}>
+            <FormControl component="fieldset" style={{display:"flex"}}>
+            <FormLabel component="legend">Gender</FormLabel>
+            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange} style={{flexDirection:"unset"}}>
+                <FormControlLabel value="female" control={<Radio />} label="Female" />
+                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                <FormControlLabel value="other" control={<Radio />} label="Other" />
+            </RadioGroup>
+            </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            //id="lastName"
+            name="Email"
+            label="Email"
+            fullWidth
+            //autoComplete="family-name"
           />
         </Grid>
         <Grid item xs={12}>
+          <TextField
+            required
+            //id="lastName"
+            name="Contact"
+            label="Contact Number"
+            fullWidth
+            //autoComplete="family-name"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            //id="lastName"
+            name="Password"
+            label="Password"
+            fullWidth
+            //autoComplete="family-name"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            //id="lastName"
+            name="ConfirmPassword"
+            label="Confirm Password"
+            fullWidth
+            //autoComplete="family-name"
+          />
+        </Grid>
+        {/*<Grid item xs={12}>
           <TextField
             required
             id="address1"
@@ -89,7 +148,7 @@ export default function AddressForm() {
             control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
             label="Use this address for payment details"
           />
-        </Grid>
+  </Grid>**/}
       </Grid>
     </React.Fragment>
   );

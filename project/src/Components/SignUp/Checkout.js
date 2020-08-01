@@ -8,19 +8,21 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import AddressForm from './AddressForm';
 import PaymentForm from './PaymentForm';
-import Review from './Review';
+//import Review from './Review';
+import { useHistory } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
+      {'Copyright © '}Your Website
+      {/*<Link color="inherit" href="https://material-ui.com/">
         Your Website
-      </Link>{' '}
+      </Link>*/}{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -64,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Basic Info', 'Personal details'];
 
 function getStepContent(step) {
   switch (step) {
@@ -72,8 +74,6 @@ function getStepContent(step) {
       return <AddressForm />;
     case 1:
       return <PaymentForm />;
-    case 2:
-      return <Review />;
     default:
       throw new Error('Unknown step');
   }
@@ -81,10 +81,15 @@ function getStepContent(step) {
 
 export default function Checkout() {
   const classes = useStyles();
+  const history = useHistory();
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
+    /*if(activeStep===2){
+      let path = `/App`; 
+      history.push(path)
+    }*/
   };
 
   const handleBack = () => {
@@ -113,18 +118,6 @@ export default function Checkout() {
               </Step>
             ))}
           </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-                <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
-                </Typography>
-                <Typography variant="subtitle1">
-                  Your order number is #2001539. We have emailed your order confirmation, and will
-                  send you an update when your order has shipped.
-                </Typography>
-              </React.Fragment>
-            ) : (
               <React.Fragment>
                 {getStepContent(activeStep)}
                 <div className={classes.buttons}>
@@ -133,18 +126,27 @@ export default function Checkout() {
                       Back
                     </Button>
                   )}
+                  {activeStep === steps.length - 1 ?
+                  <NavLink to="/">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleNext}
+                      className={classes.button}
+                    >
+                      Register
+                    </Button>
+                  </NavLink>:
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={handleNext}
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                  </Button>
+                     Next
+                  </Button>}
                 </div>
               </React.Fragment>
-            )}
-          </React.Fragment>
         </Paper>
         <Copyright />
       </main>

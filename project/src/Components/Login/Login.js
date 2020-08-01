@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,8 +12,9 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { NavLink } from 'react-router-dom';
+//import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
+import Data from '../../json/loginData.json';
 
 function Copyright() {
   return (
@@ -62,11 +63,102 @@ const useStyles = makeStyles((theme) => ({
 export default function SignInSide() {
   const classes = useStyles();
   const history = useHistory();
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorTextUser, seterrorTextUser] = useState("");
+  const [errorTextPass, seterrorTextPass] = useState("");
+  const [userError, setUserError] = useState(false)
+  const [passError, setPassError] = useState(false)
 
 
   const handleSignIn=()=>{
     let path = `/App`; 
-    history.push(path);
+    if(userId===""){
+      seterrorTextUser("Please enter UserId")
+      setUserError(true)
+      setPassError(false)
+    }
+    else if(password===""){
+      seterrorTextPass("Please enter Password")
+      setPassError(true)
+      setUserError(false)
+    }
+    else if(userId!=="" || password!==""){
+      let authCode = false
+      let checkId = Data.loginDetails.filter(function (person) { return person.Id === userId });
+      console.log(checkId)
+      if(checkId.length>0 && checkId[0].password===password){
+            authCode=true
+            history.push(path)
+      }
+      else if(checkId.length>0 && checkId[0].password!==password){
+        console.log("hello")
+        setPassError(true)
+        setUserError(false)
+        seterrorTextUser("")
+        seterrorTextPass("Please check Password")
+      }
+      /*Data.loginDetails.map(itr=>{
+        console.log(itr.Id, userId)
+        if(itr.Id.toString()===userId){
+          console.log("hello")
+          if(itr.password.toString()===password){
+            console.log("hi")
+            authCode=true
+            history.push(path)
+          }
+          else{
+            console.log("hello")
+            setPassError(true)
+            setUserError(false)
+            seterrorTextUser("")
+            seterrorTextPass("Please check Password")
+          }
+        }
+        if(itr.Id!==userId){
+          console.log(itr.Id===userId)
+          setUserError(true)
+          setPassError(false)
+          seterrorTextPass("")
+          seterrorTextUser("Please check UserId")
+        }
+      })*/
+
+      if(authCode===true){
+        setUserError(false)
+        setPassError(false)
+        setPassword("")
+        setUserId("")
+      }
+      else{
+        setUserError(true)
+        setPassError(true)
+        seterrorTextPass("Check Email Address/ Password")
+      }
+    }
+  }
+
+  const handleTextFieldValue=(e)=>{
+    if(e.key==="Enter" || e.key==="enter"){
+      seterrorTextUser("")
+      seterrorTextPass("")
+      handleSignIn()
+    }
+    else if(e.target.id==="email"){
+      setUserId(e.target.value)
+      //console.log(userId,e.target.value)
+      setUserError(false)
+      setPassError(false)
+      seterrorTextUser("")
+      seterrorTextPass("")
+    }
+    else if(e.target.id==="password"){
+      setPassword(e.target.value)
+      setPassError(false)
+      setUserError(false)
+      seterrorTextPass("")
+      seterrorTextUser("")
+    }
   }
 
   return (
@@ -81,8 +173,9 @@ export default function SignInSide() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} onSubmit={()=>handleSignIn()}>
             <TextField
+              error={userError}
               variant="outlined"
               margin="normal"
               required
@@ -90,10 +183,14 @@ export default function SignInSide() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
+              //autoComplete="email"
               autoFocus
+              helperText={errorTextUser}
+              onChange={(event)=>handleTextFieldValue(event)}
+              onKeyPress={(event)=>handleTextFieldValue(event)}
             />
             <TextField
+              error={passError}
               variant="outlined"
               margin="normal"
               required
@@ -102,14 +199,17 @@ export default function SignInSide() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              //autoComplete="current-password"
+              helperText={errorTextPass}
+              onChange={(event)=>handleTextFieldValue(event)}
+              onKeyPress={(event)=>handleTextFieldValue(event)}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
               color="primary"

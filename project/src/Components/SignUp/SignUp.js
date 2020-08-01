@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FormEl from './formEl'
 import {Table,Button,Image,Row,Col ,Form} from 'react-bootstrap'
 import axios from 'axios'
+import { NavLink } from 'react-router-dom';
 
 class Signup extends Component{
     state={
@@ -191,7 +192,7 @@ class Signup extends Component{
                 <Button varient="primary" onClick={this.changeForm}>{`Next>>`}</Button>
             </center>:
             <center>
-            <Button varient="primary" type="submit">Register</Button>
+            <NavLink to="/"><Button varient="primary" type="submit">Register</Button></NavLink>
             </center>
             }
 

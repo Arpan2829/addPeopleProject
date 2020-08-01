@@ -1,0 +1,12 @@
+{
+    "loginDetails":[
+        {
+            "Id":"Arpan",
+            "password":"Arpan"
+        },
+        {
+            "Id":"Aditya",
+            "password":"Aditya"
+        }
+    ]
+}
