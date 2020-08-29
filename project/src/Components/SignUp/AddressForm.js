@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -9,12 +9,30 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
-export default function AddressForm() {
+export default function AddressForm(props) {
   const [value, setValue] = React.useState('female');
+  const [BasicValues, setBasicValues] = useState({
+    "firstName":"",
+    "lastName":"",
+    "gender":"",
+    "Email":"",
+    "Contact":"",
+    "Password":"",
+  })
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  const handleChangeValue=(e)=>{
+    if(e.target.name==="gender")
+    setValue(e.target.value)
+
+    let dummy = BasicValues
+    dummy[e.target.name] = e.target.value
+    console.log(dummy)
+    setBasicValues(dummy) 
+    console.log(BasicValues)
+
+    props.handleSetBasic(BasicValues)
+  }
+
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -28,6 +46,7 @@ export default function AddressForm() {
             name="firstName"
             label="First name"
             fullWidth
+            onChange={handleChangeValue}
             //autoComplete="given-name"
           />
         </Grid>
@@ -38,26 +57,28 @@ export default function AddressForm() {
             name="lastName"
             label="Last name"
             fullWidth
+            onChange={handleChangeValue}
             //autoComplete="family-name"
           />
         </Grid>
         <Grid item xs={12} style={{paddingBottom:"0px"}}>
             <FormControl component="fieldset" style={{display:"flex"}}>
             <FormLabel component="legend">Gender</FormLabel>
-            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange} style={{flexDirection:"unset"}}>
-                <FormControlLabel value="female" control={<Radio />} label="Female" />
-                <FormControlLabel value="male" control={<Radio />} label="Male" />
-                <FormControlLabel value="other" control={<Radio />} label="Other" />
+            <RadioGroup aria-label="gender" name="gender" value={value} onChange={handleChangeValue} style={{flexDirection:"unset"}}>
+                <FormControlLabel value="Female" control={<Radio />} label="Female" />
+                <FormControlLabel value="Male" control={<Radio />} label="Male" />
+                <FormControlLabel value="Other" control={<Radio />} label="Other" />
             </RadioGroup>
             </FormControl>
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            //id="lastName"
+            type="email"
             name="Email"
             label="Email"
             fullWidth
+            onChange={handleChangeValue}
             //autoComplete="family-name"
           />
         </Grid>
@@ -68,23 +89,25 @@ export default function AddressForm() {
             name="Contact"
             label="Contact Number"
             fullWidth
+            onChange={handleChangeValue}
             //autoComplete="family-name"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            //id="lastName"
+            type="password"
             name="Password"
             label="Password"
             fullWidth
+            onChange={handleChangeValue}
             //autoComplete="family-name"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            //id="lastName"
+            type="password"
             name="ConfirmPassword"
             label="Confirm Password"
             fullWidth

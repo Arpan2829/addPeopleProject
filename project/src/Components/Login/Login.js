@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,6 +15,8 @@ import { makeStyles } from '@material-ui/core/styles';
 //import { NavLink } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
 import Data from '../../json/loginData.json';
+import axios from 'axios';
+// import Dashboard from '../Dashboard/Dashboard';
 
 function Copyright() {
   return (
@@ -69,10 +71,46 @@ export default function SignInSide() {
   const [errorTextPass, seterrorTextPass] = useState("");
   const [userError, setUserError] = useState(false)
   const [passError, setPassError] = useState(false)
+  const [postObject, setPostObject] = useState({})
+  const [status, setStatus] = useState(false)
+  //const [register, setRegister] = useState(false)
+  //const [token, setToken] = useState("")
+  const path = `/App`; 
 
+  async function handleLoginApi(){
+    await axios.post("https://fiveninitynine.herokuapp.com/account/api-token-login/",postObject)
+    .then(res=>{
+      console.log(res.data.status)
+      setStatus(res.data.status)
+      if(res.data.status===true){
+        console.log(status,"in")
+        // setRegister(res.data.registered)
+        // setToken(res.data.token)
+        localStorage.setItem("token",res.data.token)
+        history.push(path)
+      }
+      else if( postObject!=={}){
+        localStorage.setItem("token","")
+        
+      }
+      else{
+        localStorage.setItem("token","")
+        setUserError(true)
+        setPassError(true)
+        seterrorTextPass("Check Email Address/ Password")
+      }
+    })
+    .catch(err=>{
+      setStatus("false")
+    })
+  }
+
+  useEffect(()=>{
+    handleLoginApi()
+  },[postObject])
 
   const handleSignIn=()=>{
-    let path = `/App`; 
+    
     if(userId===""){
       seterrorTextUser("Please enter UserId")
       setUserError(true)
@@ -84,57 +122,65 @@ export default function SignInSide() {
       setUserError(false)
     }
     else if(userId!=="" || password!==""){
-      let authCode = false
-      let checkId = Data.loginDetails.filter(function (person) { return person.Id === userId });
-      console.log(checkId)
-      if(checkId.length>0 && checkId[0].password===password){
-            authCode=true
-            history.push(path)
-      }
-      else if(checkId.length>0 && checkId[0].password!==password){
-        console.log("hello")
-        setPassError(true)
-        setUserError(false)
-        seterrorTextUser("")
-        seterrorTextPass("Please check Password")
-      }
-      /*Data.loginDetails.map(itr=>{
-        console.log(itr.Id, userId)
-        if(itr.Id.toString()===userId){
-          console.log("hello")
-          if(itr.password.toString()===password){
-            console.log("hi")
-            authCode=true
-            history.push(path)
-          }
-          else{
-            console.log("hello")
-            setPassError(true)
-            setUserError(false)
-            seterrorTextUser("")
-            seterrorTextPass("Please check Password")
-          }
-        }
-        if(itr.Id!==userId){
-          console.log(itr.Id===userId)
-          setUserError(true)
-          setPassError(false)
-          seterrorTextPass("")
-          seterrorTextUser("Please check UserId")
-        }
-      })*/
 
-      if(authCode===true){
-        setUserError(false)
-        setPassError(false)
-        setPassword("")
-        setUserId("")
-      }
-      else{
-        setUserError(true)
-        setPassError(true)
-        seterrorTextPass("Check Email Address/ Password")
-      }
+      setPostObject({
+        "email":userId,
+        "password":password
+        })
+        
+        
+
+      // let authCode = false
+      // let checkId = Data.loginDetails.filter(function (person) { return person.Id === userId });
+      // console.log(checkId)
+      // if(checkId.length>0 && checkId[0].password===password){
+      //       authCode=true
+      //       history.push(path)
+      // }
+      // else if(checkId.length>0 && checkId[0].password!==password){
+      //   console.log("hello")
+      //   setPassError(true)
+      //   setUserError(false)
+      //   seterrorTextUser("")
+      //   seterrorTextPass("Please check Password")
+      // }
+      // /*Data.loginDetails.map(itr=>{
+      //   console.log(itr.Id, userId)
+      //   if(itr.Id.toString()===userId){
+      //     console.log("hello")
+      //     if(itr.password.toString()===password){
+      //       console.log("hi")
+      //       authCode=true
+      //       history.push(path)
+      //     }
+      //     else{
+      //       console.log("hello")
+      //       setPassError(true)
+      //       setUserError(false)
+      //       seterrorTextUser("")
+      //       seterrorTextPass("Please check Password")
+      //     }
+      //   }
+      //   if(itr.Id!==userId){
+      //     console.log(itr.Id===userId)
+      //     setUserError(true)
+      //     setPassError(false)
+      //     seterrorTextPass("")
+      //     seterrorTextUser("Please check UserId")
+      //   }
+      // })*/
+
+      // if(authCode===true){
+      //   setUserError(false)
+      //   setPassError(false)
+      //   setPassword("")
+      //   setUserId("")
+      // }
+      // else{
+      //   setUserError(true)
+      //   setPassError(true)
+      //   seterrorTextPass("Check Email Address/ Password")
+      // }
     }
   }
 

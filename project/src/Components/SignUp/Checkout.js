@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -15,11 +15,14 @@ import PaymentForm from './PaymentForm';
 //import Review from './Review';
 import { useHistory } from "react-router-dom";
 import { NavLink } from 'react-router-dom';
+import PayORSkip from './PayORSkip';
+import axios from 'axios'
+import AccountDetails from './AccountDetails'
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}Your Website
+      {'Copyright © IndiiGlobe'}
       {/*<Link color="inherit" href="https://material-ui.com/">
         Your Website
       </Link>*/}{' '}
@@ -66,35 +69,95 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ['Basic Info', 'Personal details'];
+const steps = ['Basic Info', 'Personal details', 'Account Details', 'Payment'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <AddressForm />;
-    case 1:
-      return <PaymentForm />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
 
 export default function Checkout() {
   const classes = useStyles();
   const history = useHistory();
   const [activeStep, setActiveStep] = React.useState(0);
+  // const [name, setName] = useState("Arpan")
+  const [PersonalValues, setPersonalValues] = useState({})
+  const [BasicValues, setBasicValues] = useState({})
+  const [postObject, setPostObject] = useState({})
+  const [status, setStatus] = useState(false)
+  const path = `/`; 
 
+  const getStepContent=(step)=> {
+    switch (step) {
+      case 0:
+        return <AddressForm handleSetBasic={handleSetBasic}/>;
+      case 1:
+        return <PaymentForm handleSetPersonal={handleSetPersonal}/>;
+      case 2:
+        return <AccountDetails/> ;
+      case 3:
+        return <PayORSkip />;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
+
+  const handleSetBasic =(text)=>{
+    //console.log("aagya",text)
+    setBasicValues(text)
+  }
+
+  const handleSetPersonal =(text)=>{
+    // console.log("aagya",text)
+    setPersonalValues(text)
+  }
+
+    
   const handleNext = () => {
     setActiveStep(activeStep + 1);
-    /*if(activeStep===2){
-      let path = `/App`; 
-      history.push(path)
-    }*/
   };
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  const handlePostObject = () => {
+    console.log("inside")
+    setPostObject({
+      "first_name":BasicValues.firstName,
+      "last_name":BasicValues.lastName,
+      "gender":BasicValues.gender,
+      "email":BasicValues.Email,
+      "mobile":BasicValues.Contact,
+      "password":BasicValues.Password,
+      "father_name":PersonalValues.FatherName,
+      "mother_name":PersonalValues.MotherName,
+      "qualification":PersonalValues.Qualification.toLowerCase(),
+      "occupation":PersonalValues.Occupation.toLowerCase(),
+      "pan":PersonalValues.PanNumber,
+      "aadhar":PersonalValues.AadharNumber,
+    })
+  }
+
+  useEffect(()=>{
+    handleRegisterApi()
+  },[postObject])
+
+
+  async function handleRegisterApi(){
+    //console.log("inside")
+    await axios.post("https://fiveninitynine.herokuapp.com/account/signup/",postObject)
+    .then(res=>{
+      //console.log(res.data.status)
+      setStatus(res.data.status)
+      if(res.data.status===true){
+        //console.log(status,"in")
+        history.push(path)
+      }
+      else{
+        //TODO
+      }
+    })
+    .catch(err=>{
+      setStatus("false")
+    })
+  }
 
   return (
     <React.Fragment>
@@ -102,7 +165,7 @@ export default function Checkout() {
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
-            Company
+            IndiiGlobe
           </Typography>
         </Toolbar>
       </AppBar>
@@ -126,17 +189,24 @@ export default function Checkout() {
                       Back
                     </Button>
                   )}
-                  {activeStep === steps.length - 1 ?
-                  <NavLink to="/">
+                  {activeStep === steps.length - 1 ?<>
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={handleNext}
+                      onClick={handlePostObject}
                       className={classes.button}
                     >
-                      Register
+                      Skip & Continue
                     </Button>
-                  </NavLink>:
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      //onClick={displayRazorpay}
+                      className={classes.button}
+                    >
+                      Payment
+                    </Button>
+                  </>:
                   <Button
                     variant="contained"
                     color="primary"
